@@ -1,0 +1,1325 @@
+/* ═══════════════════════════════════════════════════════════════
+   WALIMA INVITATION v3 — Mediterranean / Lake Como Palette
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── 0. Custom Properties ───────────────────────────────────── */
+:root {
+  /* --- Primary & Background Tones (sampled: frame-1 stucco, frame-4 sky) --- */
+  --bg-stucco-white: #f3f7fb;
+  --bg-ivory-linen: #e5edf5;
+  --door-sky-blue: #a7cbd4;
+  --lake-azure-blue: #5b93a8;
+
+  /* --- Text & Deep Contrast --- */
+  --text-deep-navy: #16394b;
+  --shadow-slate: #8fa3b8;
+
+  /* --- Romantic Florals & Accents --- */
+  --floral-bougainvillea: #f0645e;
+  --floral-blush-peach: #f9b3a6;
+  --floral-english-rose: #f0a0b4;
+  --floral-dusty-rose: #c4667e;
+  --foliage-green: #3f6b4a;
+
+
+  /* --- Derived --- */
+  --accent-ink: #2f6d8c;   /* the accent that replaced the gold */
+  --accent-glow: 0 0 18px rgba(91, 147, 168, 0.28), 0 2px 8px rgba(91, 147, 168, 0.16);
+  --card-shadow: 0 8px 40px rgba(27, 73, 92, 0.10), 0 2px 12px rgba(27, 73, 92, 0.06);
+  --radius: 16px;
+  --radius-sm: 8px;
+
+  /* --- Type (ported from walima-invi-v2) --- */
+  --font-script: 'Great Vibes', cursive;
+  --font-serif:  'Cinzel', Georgia, serif;
+  --font-name:   'Cormorant Garamond', Georgia, serif;
+  --font-body:   'Cormorant Garamond', Georgia, serif;
+  --font-arabic: 'Amiri', 'Segoe UI', serif;
+  --font-urdu:   'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', 'Amiri', serif;
+
+  /* --- Font Scale --- */
+  --f-xs: 0.75rem;
+  --f-sm: 0.875rem;
+  --f-base: 1rem;
+  --f-md: 1.15rem;
+  --f-lg: 1.4rem;
+  --f-xl: 2rem;
+  --f-2xl: 3rem;
+  --f-3xl: 4.5rem;
+}
+
+/* ── 1. Reset & Base ────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  /* v2's body sizing — Cormorant needs the weight and the size to hold up. */
+  font-size: clamp(17px, 1.1vw + 14px, 20px);
+  font-weight: 500;
+  color: var(--text-deep-navy);
+  background: var(--bg-stucco-white);
+  line-height: 1.65;
+  overflow-x: hidden;
+}
+
+body.is-locked {
+  overflow: hidden;
+}
+
+/* Site-wide mesh gradient — one fixed layer the whole page scrolls over,
+   which is what gives the depth. Sections stay transparent so it shows. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: -25%;
+  z-index: -2;
+  background:
+    radial-gradient(42% 38% at 18% 16%, rgba(167, 203, 212, 0.60), transparent 62%),
+    radial-gradient(38% 34% at 84% 10%, rgba(240, 160, 180, 0.28), transparent 64%),
+    radial-gradient(48% 44% at 76% 68%, rgba(91, 147, 168, 0.34), transparent 66%),
+    radial-gradient(44% 40% at 12% 84%, rgba(249, 179, 166, 0.26), transparent 64%),
+    var(--bg-stucco-white);
+  /* transform, not background-position — stays on the compositor. */
+  animation: mesh-drift 32s ease-in-out infinite alternate;
+}
+
+@keyframes mesh-drift {
+  from {
+    transform: translate3d(-1.5%, 1%, 0) scale(1);
+  }
+
+  to {
+    transform: translate3d(2%, -2%, 0) scale(1.09);
+  }
+}
+
+/* Film grain — kills gradient banding and adds the tactile finish. */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ── 2. Splash Screen ───────────────────────────────────────── */
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  cursor: pointer;
+  overflow: hidden;
+  background: #0d1a22;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.splash.is-gone {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Still frame image — covers whole splash before tap */
+.splash-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: opacity 0.6s ease;
+}
+
+/* Intro video — hidden until playing */
+.splash-intro-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.splash.is-playing .splash-frame {
+  opacity: 0;
+}
+
+.splash.is-playing .splash-intro-video {
+  opacity: 1;
+}
+
+/* Tap-to-open prompt */
+.splash-prompt {
+  position: absolute;
+  bottom: 12%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  transition: opacity 0.5s ease;
+}
+
+.splash.is-playing .splash-prompt {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.splash-prompt-inner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(27, 73, 92, 0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(91, 147, 168, 0.35);
+  border-radius: 50px;
+  padding: 10px 24px;
+  color: var(--bg-ivory-linen);
+  font-family: var(--font-body);
+  font-size: var(--f-md);
+  font-style: italic;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+  animation: pulse-prompt 2.2s ease-in-out infinite;
+}
+
+.splash-arrow {
+  color: var(--accent-ink);
+  font-style: normal;
+  font-size: 0.9em;
+}
+
+@keyframes pulse-prompt {
+
+  0%,
+  100% {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.03);
+  }
+}
+
+/* ── 3. Hero Section ────────────────────────────────────────── */
+.hero {
+  position: relative;
+  width: 100%;
+  height: 100svh;
+  min-height: 600px;
+  /* No overflow clip — the floral corners are meant to spill past the bottom. */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Dark ground fades out over the last quarter so the hero dissolves into
+     the site-wide mesh instead of ending on a hard edge. */
+  background: linear-gradient(180deg, #0d1a22 0%, #0d1a22 72%, rgba(13, 26, 34, 0) 100%);
+}
+
+.hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  -webkit-mask-image: linear-gradient(to bottom, #000 74%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 74%, transparent 100%);
+}
+
+.hero-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom,
+      rgba(13, 26, 34, 0.25) 0%,
+      rgba(13, 26, 34, 0.15) 40%,
+      rgba(13, 26, 34, 0.60) 100%);
+  /* Held past the date (~88%) so it keeps its dark ground while the
+     video above it is already dissolving. */
+  -webkit-mask-image: linear-gradient(to bottom, #000 88%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 88%, transparent 100%);
+}
+
+/* Hero typography — hidden until 6.5s video mark */
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  /* Deep bottom pad keeps the date and cue above the hero fade, which
+     starts at 72% and would wash pale text out against the mesh. */
+  /* padding: 4rem 1.5rem clamp(14rem, 38vh, 22rem); */
+  padding: 12rem 1.5rem clamp(14rem, 38vh, 22rem);
+  width: 100%;
+  margin-left: 26px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hero-content.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hero-top {
+  font-family: var(--font-serif);
+  margin-top: auto;
+  font-size: clamp(0.8rem, 2.9vw, 1.05rem);
+  font-weight: 300;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+
+.hero-names {
+  font-family: var(--font-name);
+  margin-bottom: auto;
+  font-style: italic;
+  font-size: clamp(3rem, 11vw, 5.8rem);
+  font-weight: 400;
+  color: #eaf3f8;
+  line-height: 1.15;
+  letter-spacing: 0.04em;
+  text-shadow: 0 2px 20px rgba(13, 26, 34, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1em;
+}
+
+.hero-name {
+  display: block;
+  color: #eaf3f8;
+}
+
+.hero-amp {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.45em;
+  font-weight: 300;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 0.3em;
+  line-height: 1;
+}
+
+.hero-date {
+  font-family: var(--font-serif);
+  font-size: clamp(1.05rem, 3.6vw, 1.45rem);
+  font-weight: 300;
+  margin-bottom: clamp(1.4rem, 4vh, 2.2rem);
+  color: #ffffff;
+  letter-spacing: 0.14em;
+}
+
+/* Floral corners anchored to the hero's bottom edge. They hang past it and
+   overlap the section below — z-index lifts them over that section. */
+.hero-floral {
+  position: absolute;
+  bottom: -14%;
+  width: clamp(190px, 42vw, 420px);
+  z-index: 6;
+  pointer-events: none;
+}
+
+.hero-floral-left {
+  left: -6%;
+  transform-origin: bottom left;
+  animation: floral-sway-left 6s ease-in-out infinite;
+}
+
+.hero-floral-right {
+  right: -5%;
+  transform-origin: bottom right;
+  animation: floral-sway-right 6.8s ease-in-out infinite;
+}
+
+@keyframes floral-sway-left {
+
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+
+  50% {
+    transform: translateY(-7px) rotate(1.4deg);
+  }
+}
+
+@keyframes floral-sway-right {
+
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+
+  50% {
+    transform: translateY(-6px) rotate(-1.4deg);
+  }
+}
+
+/* Scroll cue */
+.scroll-cue {
+  position: absolute;
+  bottom: clamp(7rem, 21vh, 11rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  text-align: center;
+}
+
+/* text-indent offsets the trailing letter-space, which would otherwise pull
+   centred tracked text a fraction to the left. */
+.scroll-cue-text {
+  font-family: var(--font-serif);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.26em;
+  text-indent: 0.26em;
+  text-transform: uppercase;
+  color: #eaf3f8;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
+  margin-bottom: 0.6rem;
+}
+
+.scroll-cue-chevron {
+  display: block;
+  width: 12px;
+  height: 12px;
+  margin: 0 auto;
+  border-right: 1.5px solid #eaf3f8;
+  border-bottom: 1.5px solid #eaf3f8;
+  animation: scroll-chevron 2s ease-in-out infinite;
+}
+
+@keyframes scroll-chevron {
+
+  0%,
+  100% {
+    transform: rotate(45deg) translate(0, 0);
+    opacity: 0.5;
+  }
+
+  50% {
+    transform: rotate(45deg) translate(3px, 3px);
+    opacity: 1;
+  }
+}
+
+/* ── 4. Sections ────────────────────────────────────────────── */
+.section {
+  position: relative;
+  padding: 2rem 1.5rem;
+  /* Transparent by design — the fixed mesh on body::before is the background. */
+  text-align: center;
+  overflow: clip;
+  /* clip, not hidden — hidden would make every section a scroll
+     container and freeze the view() timelines inside it. */
+}
+
+/* Hangs from a section's top edge — the section's own overflow clip is what
+   makes it read as trailing in from above. */
+.hanging-flowers {
+  position: absolute;
+  top: -2rem;
+  right: -3%;
+  width: clamp(120px, 30vw, 260px);
+  opacity: 0.7;
+  pointer-events: none;
+  animation: floral-sway-right 7.5s ease-in-out infinite;
+}
+
+.section-title {
+  font-family: var(--font-script);
+  font-size: clamp(2rem, 8vw, 3rem);
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--text-deep-navy);
+  margin-bottom: 1.25rem;
+}
+
+/* ── 5. Dividers ────────────────────────────────────────────── */
+/* Art is already blue — no recolor filter. */
+.divider {
+  display: block;
+  margin: 0.8rem auto 1.6rem;
+  max-width: 240px;
+  opacity: 0.92;
+}
+
+.divider-frame {
+  max-width: 190px;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+/* ── 6. Blessing / Frame Card ───────────────────────────────── */
+.frame-section {
+  padding-top: 5.5rem;
+  padding-bottom: 5.5rem;
+}
+
+.frame {
+  position: relative;
+  max-width: 480px;
+  margin: 0 auto;
+  /* ponytail: fixed top pad clears the arch across phone->desktop widths;
+     swap for an SVG mask if the frame art ever changes proportions. */
+  padding: clamp(148px, 25vw, 196px) clamp(30px, 8vw, 64px) clamp(64px, 12vw, 96px);
+  text-align: center;
+}
+
+/* Arch art lives on ::before so the filter recolors the cream/gold
+   asset to the cool palette without tinting the text on top of it. */
+.frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('./assets/bismillah-frame.webp') no-repeat center/100% 100%;
+  filter: hue-rotate(178deg) saturate(0.72) brightness(1.04) drop-shadow(0 22px 46px rgba(22, 57, 75, 0.18));
+}
+
+.frame>* {
+  position: relative;
+}
+
+.frame-bismillah {
+  max-width: 180px;
+  margin: 0 auto 0.5rem;
+  filter:
+    brightness(0) sepia(1) hue-rotate(175deg) saturate(3) brightness(0.65);
+}
+
+.frame-translation {
+  font-family: var(--font-body);
+  font-size: var(--f-sm);
+  font-style: italic;
+
+  line-height: 1.6;
+  margin-bottom: 0.5rem;
+}
+
+.frame-hosts {
+  font-family: var(--font-serif);
+  font-size: clamp(0.8rem, 2.5vw, 1rem);
+  color: var(--text-deep-navy);
+  letter-spacing: 0.04em;
+  margin: 0.5rem 0 0.25rem;
+}
+
+.frame-line {
+  font-family: var(--font-body);
+  font-size: var(--f-sm);
+  font-style: italic;
+
+  margin: 0.15rem 0;
+}
+
+.frame-occasion {
+  font-family: var(--font-script);
+  font-size: clamp(2.2rem, 9vw, 3.1rem);
+  line-height: 1.2;
+  color: var(--accent-ink);
+  margin: 0.35rem 0;
+  text-shadow: var(--accent-glow);
+}
+
+.frame-name {
+  font-family: var(--font-body);
+  font-size: clamp(1.3rem, 4vw, 1.85rem);
+  font-weight: 600;
+  color: var(--text-deep-navy);
+  letter-spacing: 0.04em;
+  margin: 0.2rem 0;
+}
+
+.frame-with {
+  font-size: var(--f-base);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent-ink);
+  margin: 0.4rem 0;
+}
+
+/* ── 7. Countdown ────────────────────────────────────────────── */
+/* Four fixed columns — a flex row with min-widths wrapped to two lines
+   on narrow phones. Grid columns just get narrower instead. */
+.countdown {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(0.35rem, 2vw, 1.5rem);
+  max-width: 540px;
+  margin: 1rem auto;
+}
+
+.unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1.5px solid rgba(91, 147, 168, 0.22);
+  border-radius: 16px;
+  padding: clamp(0.8rem, 3vw, 1.4rem) clamp(0.3rem, 2vw, 1.5rem);
+  min-width: 0;
+  box-shadow: var(--card-shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+
+
+.unit .num {
+  font-family: var(--font-serif);
+  font-size: clamp(1.5rem, 6vw, 2.8rem);
+  font-weight: 700;
+  color: var(--text-deep-navy);
+  line-height: 1;
+  background: linear-gradient(135deg, var(--text-deep-navy), var(--lake-azure-blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.unit .label {
+  font-family: var(--font-body);
+  font-size: clamp(0.55rem, 2.2vw, 0.75rem);
+  font-weight: 400;
+  letter-spacing: clamp(0.02em, 0.6vw, 0.2em);
+  white-space: nowrap;
+  text-transform: uppercase;
+
+  margin-top: 0.3rem;
+}
+
+.cd-done {
+  font-family: var(--font-script);
+  font-size: 2rem;
+  color: var(--accent-ink);
+  margin-top: 1rem;
+}
+
+
+
+/* Diagonal pair framing the schedule — same art, one rotated. */
+.corner-floral {
+  position: absolute;
+  width: clamp(110px, 26vw, 230px);
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.corner-floral-tl {
+  top: -1rem;
+  left: -2rem;
+}
+
+.corner-floral-br {
+  bottom: -1rem;
+  right: -2rem;
+  transform: rotate(180deg);
+}
+
+.timeline {
+  position: relative;
+  max-width: 400px;
+  margin: 2rem auto 0;
+}
+
+/* Fixed row height is what lets the marker's travel be expressed in plain
+   percentages: with two equal rows the stops sit at 25% and 75%. */
+.timeline-item {
+  display: grid;
+  grid-template-columns: 1fr 56px 1fr;
+  align-items: center;
+  gap: 1rem;
+  height: 116px;
+  position: relative;
+  z-index: 1;
+}
+
+.timeline-time {
+  font-family: var(--font-serif);
+  font-size: clamp(1.25rem, 5vw, 1.85rem);
+  color: var(--text-deep-navy);
+  text-align: right;
+  line-height: 1.1;
+}
+
+.timeline-event {
+  font-family: var(--font-body);
+  font-size: var(--f-md);
+  font-style: italic;
+  text-align: left;
+  line-height: 1.35;
+}
+
+.timeline-dot {
+  justify-self: center;
+  width: 10px;
+  height: 10px;
+  background: var(--lake-azure-blue);
+  transform: rotate(45deg);
+  box-shadow: 0 0 0 4px rgba(243, 247, 251, 0.9);
+}
+
+/* Track runs stop-to-stop: 25% → 75% of the timeline's height. */
+.timeline-line,
+.timeline-fill {
+  position: absolute;
+  left: 50%;
+  top: 25%;
+  height: 50%;
+  width: 1.5px;
+  margin-left: -0.75px;
+}
+
+.timeline-line {
+  background: rgba(110, 140, 168, 0.28);
+}
+
+.timeline-fill {
+  background: linear-gradient(180deg, var(--door-sky-blue), var(--lake-azure-blue));
+  transform-origin: top;
+  /* Default is the finished state, so browsers without scroll timelines
+     (and reduced-motion users) see a complete line rather than a stub. */
+  transform: scaleY(1);
+}
+
+.timeline-marker {
+  position: absolute;
+  left: 50%;
+  top: 75%;
+  width: 54px;
+  margin: -27px 0 0 -27px;
+  z-index: 2;
+  pointer-events: none;
+  filter: drop-shadow(0 3px 8px rgba(27, 73, 92, 0.28));
+}
+
+@supports (animation-timeline: view()) {
+
+  /* Both animations move their own element, so they must NOT run on their own
+     view() timeline — that feeds back on itself and the marker never travels.
+     The container is the stable subject; children reference it by name. */
+  .timeline {
+    view-timeline-name: --programme;
+  }
+
+  .timeline-marker {
+    animation: marker-travel linear both;
+  }
+
+  .timeline-fill {
+    animation: fill-trail linear both;
+  }
+
+  .timeline-marker,
+  .timeline-fill {
+    animation-timeline: --programme;
+    animation-range: entry 90% cover 55%;
+  }
+}
+
+@keyframes marker-travel {
+  from {
+    top: 25%;
+    transform: rotate(0deg);
+  }
+
+  to {
+    top: 75%;
+    transform: rotate(32deg);
+  }
+}
+
+@keyframes fill-trail {
+  from {
+    transform: scaleY(0);
+  }
+
+  to {
+    transform: scaleY(1);
+  }
+}
+
+/* ── 8. Event Card & Venue ───────────────────────────────────── */
+.card {
+  max-width: 480px;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1.5px solid rgba(91, 147, 168, 0.22);
+  border-radius: var(--radius);
+  padding: 2.5rem 2rem 2rem;
+  box-shadow: var(--card-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  text-align: center;
+}
+
+.event-day {
+  font-family: var(--font-body);
+  font-size: var(--f-md);
+  font-style: italic;
+  margin-bottom: 0.2rem;
+}
+
+.venue-name {
+  font-family: var(--font-body);
+  font-size: clamp(0.85rem, 2.5vw, 1.05rem);
+  color: var(--text-deep-navy);
+  letter-spacing: 0.06em;
+  margin-bottom: 0.4rem;
+}
+
+.venue-address {
+  font-family: var(--font-body);
+  font-size: var(--f-sm);
+  font-style: italic;
+
+  line-height: 1.6;
+  margin-bottom: 1.25rem;
+}
+
+.map-wrap {
+  position: relative;
+  width: 100%;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+  border: 1.5px solid rgba(167, 203, 212, 0.35);
+  box-shadow: 0 2px 12px rgba(27, 73, 92, 0.1);
+}
+
+/* Inert preview — the overlay link takes every tap, so the map never
+   swallows a scroll gesture on a phone. */
+.map-wrap iframe {
+  width: 100%;
+  height: 220px;
+  border: none;
+  display: block;
+  pointer-events: none;
+}
+
+.map-link {
+  position: absolute;
+  inset: 0;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, var(--text-deep-navy), var(--lake-azure-blue));
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: var(--f-sm);
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.75rem 2rem;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+  box-shadow: 0 4px 16px rgba(27, 73, 92, 0.3);
+}
+
+.btn:hover,
+.btn:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(27, 73, 92, 0.35);
+  opacity: 0.95;
+}
+
+/* ── 9. Chandelier ───────────────────────────────────────────── */
+.chandelier-wrap {
+  text-align: center;
+  padding: 2rem 1rem 1rem;
+  background: var(--bg-ivory-linen);
+}
+
+.chandelier {
+  max-width: 180px;
+  margin: 0 auto;
+  filter:
+    brightness(0.9) sepia(0.7) hue-rotate(175deg) saturate(1.2) brightness(1.1);
+  animation: chandelier-sway 6s ease-in-out infinite;
+  transform-origin: top center;
+}
+
+@keyframes chandelier-sway {
+
+  0%,
+  100% {
+    transform: rotate(-1.5deg);
+  }
+
+  50% {
+    transform: rotate(1.5deg);
+  }
+}
+
+/* ── 10. Contacts ────────────────────────────────────────────── */
+.contacts {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 380px;
+  margin: 0 auto;
+}
+
+.contact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1.5px solid rgba(135, 206, 235, 0.22);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: var(--card-shadow);
+  text-decoration: none;
+}
+
+.contact:hover,
+.contact:focus-visible {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(27, 73, 92, 0.14);
+}
+
+.contact-name {
+  font-family: var(--font-serif);
+  font-size: clamp(0.7rem, 2vw, 0.85rem);
+  color: var(--text-deep-navy);
+  letter-spacing: 0.05em;
+}
+
+.contact-num {
+  font-family: var(--font-body);
+  font-size: var(--f-lg);
+  font-weight: 400;
+  color: var(--lake-azure-blue);
+  letter-spacing: 0.08em;
+}
+
+/* ── 11. Closing / Ayah ──────────────────────────────────────── */
+#closing {
+  position: relative;
+  overflow: hidden;
+}
+
+.ayah {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 2.5rem 2rem;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1.5px solid rgba(135, 206, 235, 0.22);
+  border-radius: 24px;
+  box-shadow: var(--card-shadow);
+}
+
+.ayah-ar {
+  font-family: var(--font-arabic);
+  font-size: clamp(1.3rem, 4vw, 1.8rem);
+  line-height: 2;
+  color: var(--text-deep-navy);
+  margin-bottom: 1.25rem;
+}
+
+/* Nastaliq sits on a steep diagonal baseline — it needs far more leading
+   than a Latin face, and never italic. */
+.ayah-ur {
+  font-family: var(--font-urdu);
+  font-size: clamp(0.95rem, 3.2vw, 1.15rem);
+  line-height: 2.6;
+  margin-bottom: 0.75rem;
+  border: none;
+  padding: 0;
+}
+
+.ayah-ref {
+  font-family: var(--font-serif);
+  font-size: var(--f-xs);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent-ink);
+}
+
+/* ── 12. Falling Petals ──────────────────────────────────────── */
+.petal-field {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  --fall: 500px;
+}
+
+.petal {
+  position: absolute;
+  top: -60px;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+/* The sprite is a near-white silhouette — hue-rotate/sepia can't tint it,
+   so it's used as a mask and filled with the blush-rose of frame-4's roses. */
+.petal i {
+  display: block;
+  width: var(--size, 20px);
+  height: var(--size, 20px);
+  background: linear-gradient(160deg, #d8ecf7, var(--door-sky-blue));
+  -webkit-mask: var(--sprite) center / contain no-repeat;
+  mask: var(--sprite) center / contain no-repeat;
+}
+
+.petal-field.is-falling .petal {
+  animation:
+    petal-fall var(--duration, 8s) var(--delay, 0s) ease-in infinite,
+    petal-sway var(--sway, 3.5s) var(--delay, 0s) ease-in-out alternate infinite;
+}
+
+@keyframes petal-fall {
+  0% {
+    opacity: 0;
+    transform: translateY(0) rotate(0deg);
+  }
+
+  10% {
+    opacity: var(--opacity, 0.7);
+  }
+
+  90% {
+    opacity: var(--opacity, 0.7);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(var(--fall)) rotate(var(--spin, 180deg));
+  }
+}
+
+@keyframes petal-sway {
+  from {
+    margin-left: 0;
+  }
+
+  to {
+    margin-left: var(--drift, 30px);
+  }
+}
+
+/* ── 13. Footer ──────────────────────────────────────────────── */
+.footer {
+  position: relative;
+  overflow: clip;
+  text-align: center;
+  /* The band is full-bleed art with a fixed 864x260 aspect, so its rendered
+     height tracks viewport width. The bottom pad has to track it too or the
+     sign-off ends up behind the flowers. */
+  padding: 4rem 1.5rem clamp(150px, 31vw, 330px);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(216, 228, 240, 0.55) 100%);
+}
+
+.footer-flower {
+  max-width: 82px;
+  margin: 0 auto 0.75rem;
+  animation: footer-flower-sway 7s ease-in-out infinite;
+  transform-origin: 50% 15%;
+}
+
+@keyframes footer-flower-sway {
+
+  0%,
+  100% {
+    transform: rotate(-3.5deg) translateY(0);
+  }
+
+  50% {
+    transform: rotate(3.5deg) translateY(-5px);
+  }
+}
+
+/* Peony band closing the page out. Capped so it does not become a 400px
+   wall of flowers on a desktop monitor. */
+.footer-border {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  width: min(100%, 1000px);
+  /* Centred with auto margins, not translateX(-50%) — that would have to be
+     repeated in every keyframe, and one omission throws the band half a
+     width off screen. This leaves transform free for the animation. */
+  margin-inline: auto;
+  /* Holds the correct box before the image decodes. */
+  aspect-ratio: 864 / 260;
+  height: auto;
+  pointer-events: none;
+  opacity: 0.9;
+  transform-origin: bottom center;
+  animation: footer-band-breathe 12s ease-in-out infinite alternate;
+}
+
+@keyframes footer-band-breathe {
+  from {
+    transform: translateY(5px) scale(1);
+  }
+
+  to {
+    transform: translateY(0) scale(1.035);
+  }
+}
+
+/* Same gradient-text treatment as the countdown numerals, so the two biggest
+   moments on the page are lit the same way. */
+.footer-monogram {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-script);
+  font-size: clamp(3rem, 11vw, 4.4rem);
+  line-height: 1.2;
+  margin-bottom: 0.35rem;
+  background: linear-gradient(135deg, var(--text-deep-navy), var(--lake-azure-blue));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* text-fill-color inherits, so the ampersand has to opt back out of the
+   parent's gradient to keep its own colour. */
+.footer-monogram span {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 0.62em;
+  -webkit-text-fill-color: var(--door-sky-blue);
+  color: var(--door-sky-blue);
+}
+
+.footer-line {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-serif);
+  font-size: var(--f-sm);
+  font-weight: 600;
+  color: var(--accent-ink);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 0.3rem;
+}
+
+.footer-venue {
+  font-size: var(--f-xs);
+  letter-spacing: 0.18em;
+  color: var(--shadow-slate);
+}
+
+.footer-signoff {
+  font-family: var(--font-body);
+  font-size: var(--f-md);
+  font-style: italic;
+  color: var(--text-deep-navy);
+  margin-top: 1.5rem;
+}
+
+/* ── 14. Music Button ────────────────────────────────────────── */
+/* v2 behaviour: quiet outlined pill when paused with a strike-through bar,
+   filled when playing. Palette is the lake blue, not v2's gold. */
+.music-btn {
+  position: fixed;
+  z-index: 800;
+  right: max(18px, env(safe-area-inset-right));
+  bottom: max(18px, env(safe-area-inset-bottom));
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  color: var(--accent-ink);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(91, 147, 168, 0.35);
+  border-radius: 50%;
+  cursor: pointer;
+  padding: 0;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 8px 22px rgba(27, 73, 92, 0.16);
+  transition: transform 0.3s ease, background 0.3s ease, color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.music-btn:hover {
+  transform: scale(1.06);
+}
+
+.music-btn svg {
+  width: 22px;
+  height: 22px;
+}
+
+.music-btn.is-playing {
+  background: linear-gradient(135deg, var(--text-deep-navy), var(--lake-azure-blue));
+  border-color: transparent;
+  color: #eaf3f8;
+}
+
+/* Strike-through bar shows while muted. */
+.music-bar {
+  position: absolute;
+  width: 30px;
+  height: 1.4px;
+  background: currentColor;
+  rotate: -45deg;
+  transform-origin: center;
+  transition: opacity 0.3s ease, scale 0.3s ease;
+}
+
+.music-btn.is-playing .music-bar {
+  opacity: 0;
+  scale: 0 1;
+}
+
+/* ── 15. Reveal on Scroll ────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.85s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.85s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.reveal.is-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Native scroll-driven version: progress is tied to actual scroll position
+   rather than a one-shot "visible" flip. The .is-in JS path above stays as
+   the fallback for browsers without view() timelines. */
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: reveal-in linear both;
+    animation-timeline: view();
+    animation-range: entry 10% cover 34%;
+  }
+}
+
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── 16. Accessibility ───────────────────────────────────────── */
+*:focus-visible {
+  outline: 2px dashed var(--accent-ink);
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  /* Scroll-driven animations ignore animation-duration, so neutralize them here. */
+  .reveal {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .timeline-marker {
+    animation: none;
+    top: 75%;
+  }
+
+  .timeline-fill {
+    animation: none;
+    transform: scaleY(1);
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── 17. Responsive ─────────────────────────────────────────── */
+@media (max-width: 480px) {
+
+  /* .frame padding is clamp()-driven — no override needed */
+  .card {
+    padding: 2rem 1.25rem 1.75rem;
+  }
+
+  .ayah {
+    padding: 1.75rem 1.25rem;
+  }
+
+  .footer {
+    padding: 3rem 1.25rem 2.5rem;
+  }
+
+  .contacts {
+    padding: 0 0.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .contacts {
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .contact {
+    min-width: 200px;
+  }
+}
