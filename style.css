@@ -298,7 +298,7 @@ a {
 .hero-top {
   font-family: var(--font-serif);
   margin-top: auto;
-  font-size: clamp(0.8rem, 2.9vw, 1.05rem);
+  font-size: clamp(1.5rem, 2.9vw, 1.05rem);
   font-weight: 300;
   letter-spacing: 0.45em;
   text-transform: uppercase;
@@ -309,7 +309,7 @@ a {
   font-family: var(--font-name);
   margin-bottom: auto;
   font-style: italic;
-  font-size: clamp(3rem, 11vw, 5.8rem);
+  font-size: clamp(4rem, 11vw, 5.8rem);
   font-weight: 400;
   color: #eaf3f8;
   line-height: 1.15;
@@ -339,7 +339,7 @@ a {
 
 .hero-date {
   font-family: var(--font-serif);
-  font-size: clamp(1.05rem, 3.6vw, 1.45rem);
+  font-size: clamp(1.25rem, 3.6vw, 1.45rem);
   font-weight: 300;
   margin-bottom: clamp(1.4rem, 4vh, 2.2rem);
   color: #ffffff;

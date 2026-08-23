@@ -22,7 +22,7 @@
   var videoEnded  = false;  // true once intro video has ended
 
   /* Timestamp (seconds) at which hero content fades in */
-  var HERO_REVEAL_TIME = 8;
+  var HERO_REVEAL_TIME = 7;
 
   /* ── Helpers ────────────────────────────────────────────────── */
   function safePlay(el) {
